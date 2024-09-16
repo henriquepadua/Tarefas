@@ -71,3 +71,22 @@ Licença
 Este projeto está licenciado sob os termos da licença MIT. Consulte o arquivo LICENSE para mais informações.
 
 Esse README abrange as funcionalidades principais e a estrutura do projeto. Se houver mais funcionalidades ou detalhes no código, posso ajustar conforme necessário!
+
+//////////////////////////////////////////////////////////////////////////////////////////
+Perguntas e respostas:
+1- O trabalho possui um índice direto implementado com a tabela hash extensível?
+	NAO
+2- A operação de inclusão insere um novo registro no fim do arquivo e no índice e retorna o ID desse registro?
+	SIM
+3- A operação de busca retorna os dados do registro, após localizá-lo por meio do índice direto?
+	NAO
+4- A operação de alteração altera os dados do registro e trata corretamente as reduções e aumentos no espaço do registro?
+	NAO
+5- A operação de exclusão marca o registro como excluído e o remove do índice direto?
+	SIM
+6- O trabalho está funcionando corretamente?
+	SIM
+7- O trabalho está completo?
+	NAO
+8- O trabalho é original e não a cópia de um trabalho de outro grupo?
+	SIM
