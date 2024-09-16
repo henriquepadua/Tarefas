@@ -46,7 +46,7 @@ public class Arquivo{
         return tarefas;
     }
 
-    public static void create(Tarefas tarefas) throws IOException{ 
+    public static int create(Tarefas tarefas) throws IOException{ 
 
         //fileReader = new RandomAccessFile("Tarefas.db", "rw");
         fileReader.seek(0);
@@ -67,11 +67,11 @@ public class Arquivo{
         byte[] ba = tarefas.toByteArray();
                
         fileReader.writeInt(ba.length);
-        fileReader.write(ba);     
-
+        fileReader.write(ba); 
+        return proximoId;    
     }
 
-    public static void criarTarefas(Tarefas tarefas) throws Exception{
+    public static int criarTarefas(Tarefas tarefas) throws Exception{
         Scanner sc = new Scanner(System.in);
         System.out.println("Digite o nome: ");
         tarefas.setNome(sc.nextLine());
@@ -88,7 +88,7 @@ public class Arquivo{
         System.out.println("Digite a Prioridade: ");
         tarefas.setPrioridade(sc.next());
 
-        create(tarefas);
+        return create(tarefas);
     }
 
     public static Tarefas pesquisa(int id, Tarefas jogador) throws IOException{
