@@ -74,19 +74,33 @@ Esse README abrange as funcionalidades principais e a estrutura do projeto. Se h
 
 //////////////////////////////////////////////////////////////////////////////////////////
 Perguntas e respostas:
-1- O trabalho possui um índice direto implementado com a tabela hash extensível?
-	NAO
-2- A operação de inclusão insere um novo registro no fim do arquivo e no índice e retorna o ID desse registro?
+
+01 - O CRUD (com índice direto) de categorias foi implementado?
 	SIM
-3- A operação de busca retorna os dados do registro, após localizá-lo por meio do índice direto?
-	NAO
-4- A operação de alteração altera os dados do registro e trata corretamente as reduções e aumentos no espaço do registro?
-	NAO
-5- A operação de exclusão marca o registro como excluído e o remove do índice direto?
+
+02 - Há um índice indireto de nomes para as categorias?
+	NÃO
+
+03 - O atributo de ID de categoria, como chave estrangeira, foi criado na classe Tarefa?
 	SIM
-6- O trabalho está funcionando corretamente?
+
+04 - Há uma árvore B+ que registre o relacionamento 1:N entre tarefas e categorias?
 	SIM
-7- O trabalho está completo?
-	NAO
-8- O trabalho é original e não a cópia de um trabalho de outro grupo?
-SIM
+
+05 - É possível listar as tarefas de uma categoria?
+	SIM
+
+06 - A remoção de categorias checa se há alguma tarefa vinculada a ela?
+	SIM
+
+07 - A inclusão da categoria em uma tarefa se limita às categorias existentes?
+	NÃO
+
+08 - O trabalho está funcionando corretamente?
+	SIM
+
+09 - O trabalho está completo?
+	NÃO
+
+10 - O trabalho é original e não a cópia de um trabalho de outro grupo?
+	SIM
