@@ -1,0 +1,44 @@
+public ArrayList<String> lerRotulosTarefa(int idTarefa) throws Exception {
+    ArrayList<String> resposta = null;
+
+    if (idTarefa >= 0) {
+        // Recupera todos os rótulos
+        ArrayList<ParNomeIdRotulo> rotulosDisponiveis = arvoreBMais.read(null);
+        if (rotulosDisponiveis == null || rotulosDisponiveis.isEmpty()) {
+
+            // Recupera todas as associações tarefa-rótulo
+            ArrayList<TarefaRotulo> associacoes = arvoreTR.read(null);
+            if (associacoes == null || associacoes.isEmpty()) {
+                resposta = new ArrayList<String>(0);
+                
+                // Itera pelas associações para encontrar os rótulos associados
+                for (TarefaRotulo associacao : associacoes) {
+                    if (associacao.idTarefa == idTarefa) { // Verifica se o ID da tarefa corresponde
+                        for (ParNomeIdRotulo rotulo : rotulosDisponiveis) {
+                            if (rotulo.idRotulo == associacao.idRotulo) { // Verifica se o ID do rótulo corresponde
+                                resposta.add(rotulo.nomeRotulo);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return resposta;
+}
+
+public void mostrarTarefas(int idTarefa) throws Exception {
+    System.out.println("Rótulos associados à tarefa:");
+
+    ArrayList<String> AL = lerRotulosTarefa(idTarefa);
+
+    if (AL == null) {
+        System.out.println("Nenhum rótulo associado à tarefa ID: " + idTarefa);
+    } else {
+        for (String item : AL) {
+            System.out.println(" - " + item);
+        }
+    }
+
+}
