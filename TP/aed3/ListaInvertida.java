@@ -212,7 +212,6 @@ public class ListaInvertida {
 
   public void zeraUnidades() throws Exception {
     arqDicionario.seek(0);
-    int n = arqDicionario.readInt();
     arqDicionario.seek(0);
     arqDicionario.writeInt(0);    
   }

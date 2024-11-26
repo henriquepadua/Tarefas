@@ -1,5 +1,9 @@
 import java.util.Scanner;
 
+import Menus.MenuCategorias;
+import Menus.MenuRotulo;
+import Menus.MenuTarefas;
+
 public class IO {
 
     public static void main(String[] args) {
