@@ -71,14 +71,14 @@ public class Tarefa implements Registro {
 
     public String toString( ArquivoRotulo AR, ArquivoCategoria AC ) {
         String resposta = "Tarefa :\n" +
-                "id             = " + id + "\n" +
-                "nome           = " + nome + "\n" +
-                "dataCriacao    = " + dataCriacao + "\n" +
-                "dataConclusao  = " + dataConclusao + "\n" +
-                "status         = " + status + "\n" +
-                "prioridade     = " + prioridade + "\n" +
-                "idCategoria    = " + idCategoria + "\n" +
-                "idRotulos      = " + AR.StringRotulos(id) + "\n";
+                "\nid             = " + id +
+                "\nnome           = " + nome +
+                "\ndataCriacao    = " + dataCriacao + 
+                "\ndataConclusao  = " + dataConclusao + 
+                "\nstatus         = " + status + 
+                "\nprioridade     = " + prioridade +
+                "\nCategoria      = " + AC.StringCategoria(idCategoria) +
+                "\nRotulos        = " + AR.StringRotulos(id) + "\n";
         return resposta;
     }
 

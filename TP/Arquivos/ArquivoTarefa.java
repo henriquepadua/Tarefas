@@ -1,4 +1,5 @@
 package Arquivos;
+
 import aed3.*;
 
 import java.io.RandomAccessFile;
@@ -53,7 +54,8 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
         arvoreCT = new ArvoreBMais<>(CategoriaTarefa.class.getConstructor(), 5, "dados/CategoriaTarefa.db");
         arvoreRT = new ArvoreBMais<>(RotuloTarefa.class.getConstructor(), 5, "dados/RotuloTarefa.db");
         arvoreTR = new ArvoreBMais<>(TarefaRotulo.class.getConstructor(), 5, "dados/TarefaRotulo.db");
-        arvoreBMais = new ArvoreBMais<>(ParNomeIdTarefa.class.getConstructor(), ordemArvore, "dados/ParNomeIdTarefa.db");
+        arvoreBMais = new ArvoreBMais<>(ParNomeIdTarefa.class.getConstructor(), ordemArvore,
+                "dados/ParNomeIdTarefa.db");
 
         // carregar stop-words
         gerarLista();
@@ -63,20 +65,20 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
     public int create(Tarefa tarefa) throws Exception {
         int id = arqTarefas.create(tarefa);
         arvoreCT.create(new CategoriaTarefa(tarefa.idCategoria, tarefa.getId()));
-        
+
         for (int i = 0; i < tarefa.idRotulo.size(); i++) {
             arvoreRT.create(new RotuloTarefa(tarefa.idRotulo.get(i), tarefa.getId()));
         }
         for (int i = 0; i < tarefa.idRotulo.size(); i++) {
-            arvoreTR.create(new TarefaRotulo( tarefa.getId(), tarefa.idRotulo.get(i)));
+            arvoreTR.create(new TarefaRotulo(tarefa.getId(), tarefa.idRotulo.get(i)));
         }
-        
-        boolean arvoreSucesso = arvoreBMais.create(new ParNomeIdTarefa(tarefa.nome , tarefa.getId()));
+
+        boolean arvoreSucesso = arvoreBMais.create(new ParNomeIdTarefa(tarefa.nome, tarefa.getId()));
         if (!arvoreSucesso) {
             // Tratamento se a inserção na árvore falhar
             System.err.println("Erro ao inserir na Árvore B+.");
         }
-        
+
         adicionarLista(tarefa, id);
         quantidadeTarefas++;
         System.out.println(quantidadeTarefas);
@@ -122,12 +124,26 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
         }
     }
 
+    public void mostrarNomeTarefas() throws Exception {
+        ArrayList<CategoriaTarefa> ict = arvoreCT.read(null);
+
+        System.out.println("\nLista de Tarefas: ");
+
+        for (int i = 0; i < ict.size(); i++) {
+            Tarefa tarefa = arqTarefas.read(ict.get(i).idTarefa);
+            if (tarefa != null) {
+                System.out.println(" - " + tarefa.nome + " ");
+                System.out.println();
+            }
+        }
+    }
+
     public void mostrarTarefasCategoria(int idCategoria) throws Exception {
         ArrayList<CategoriaTarefa> ict = arvoreCT.read(null);
         for (int i = 0; i < ict.size(); i++) {
             Tarefa tarefa = arqTarefas.read(ict.get(i).idTarefa);
             if ((tarefa != null) && (tarefa.idCategoria == idCategoria)) {
-                System.out.println(tarefa.toString() + " ");
+                System.out.println(tarefa.toString(arquivoRotulo, arquivoCategoria) + " ");
                 System.out.println();
             }
         }
@@ -172,18 +188,18 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
                 }
             }
             /*
-            EXCLUSÃO NA ARVORE EM DESENVOLVIMENTO
-            if ( resp == true ) {
-            ArrayList<ParNomeIdTarefa> ictT = arvoreBMais.read(null);
-                    for (int i = 0; i < ictT.size(); i++) {
-                        if (ictT.get(i).nomeTarefa.equals(entrada)) {
-                            System.out.println("Tarefa: " + entrada);
-                        }
-                    }
-
-                    resp = arvoreBMais.delete(new ParNomeIdRotulo(ictT.get(i).nomeTarefa, -1));
-                }
-            */
+             * EXCLUSÃO NA ARVORE EM DESENVOLVIMENTO
+             * if ( resp == true ) {
+             * ArrayList<ParNomeIdTarefa> ictT = arvoreBMais.read(null);
+             * for (int i = 0; i < ictT.size(); i++) {
+             * if (ictT.get(i).nomeTarefa.equals(entrada)) {
+             * System.out.println("Tarefa: " + entrada);
+             * }
+             * }
+             * 
+             * resp = arvoreBMais.delete(new ParNomeIdRotulo(ictT.get(i).nomeTarefa, -1));
+             * }
+             */
             if (resp == true) {
                 System.out.println("Tarefa apagada com sucesso!");
             }
@@ -192,29 +208,23 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
 
     public void buscarTarefas() throws Exception {
         String entrada;
+        System.out.println("Mostrando as tarefas existentes...");
+        mostrarNomeTarefas();
 
-        System.out.println("Você deseja pesquisar alguma tarefa? (S/N)");
-        char caracter = console.nextLine().trim().toUpperCase().charAt(0); // Melhorado para ser case insensitive
+        System.out.println("Entre com o nome da tarefa a ser retornada: ");
+        entrada = console.nextLine();
 
-        if (caracter == 'S') {
-            System.out.println("Mostrando as tarefas existentes...");
-            mostrarTarefas(); // Presumo que você tenha esse método implementado
-
-            System.out.println("Entre com o nome da tarefa a ser retornada: ");
-            entrada = console.nextLine();
-
-            ArrayList<CategoriaTarefa> ict = arvoreCT.read(null); // Certifique-se de que arvoreCT não retorne null
-            if (ict != null) {
-                Tarefa tarefa = null;
-                for (CategoriaTarefa categoriaTarefa : ict) {
-                    tarefa = arqTarefas.read(categoriaTarefa.idTarefa); // Lendo a tarefa a partir do ID da categoria
-                    if (tarefa != null && tarefa.nome.equals(entrada)) { // Simplificado
-                        System.out.println(tarefa.toString());
-                    }
+        ArrayList<CategoriaTarefa> ict = arvoreCT.read(null);
+        if (ict != null) {
+            Tarefa tarefa = null;
+            for (CategoriaTarefa categoriaTarefa : ict) {
+                tarefa = arqTarefas.read(categoriaTarefa.idTarefa);
+                if (tarefa != null && tarefa.nome.equals(entrada)) {
+                    System.out.println(tarefa.toString());
                 }
-            } else {
-                System.out.println("Nenhuma tarefa encontrada.");
             }
+        } else {
+            System.out.println("Nenhuma tarefa encontrada.");
         }
     }
 
@@ -389,7 +399,7 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
         }
     }
 
-    public void adicionarLista (Tarefa tarefa, int idTarefa) throws Exception {
+    public void adicionarLista(Tarefa tarefa, int idTarefa) throws Exception {
         float frequencia;
         int i = 0;
         String nomeTarefa = removerAcentos(tarefa.nome);
@@ -443,7 +453,7 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
 
         for (ElementoLista e : arrayList) {
             tarefa = arqTarefas.read(e.getId());
-            System.out.println(tarefa.toString());
+            System.out.println(tarefa.toString(arquivoRotulo, arquivoCategoria));
         }
     }
 

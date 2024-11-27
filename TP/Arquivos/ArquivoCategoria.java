@@ -12,7 +12,7 @@ public class ArquivoCategoria extends aed3.Arquivo<Categoria> {
     ArvoreBMais<ParNomeId> arvoreBMais;
     RandomAccessFile arquivo;
     Scanner console = new Scanner(System.in);
-    // ArquivoTarefa arquivoTarefa;
+    // ArquivoTarefa arquivoTarefa;~~
 
     public ArquivoCategoria() throws Exception {
         super("categorias.db", Categoria.class.getConstructor());
@@ -37,6 +37,36 @@ public class ArquivoCategoria extends aed3.Arquivo<Categoria> {
             System.err.println("Erro ao inserir na Árvore B+.");
         }
         return id;
+    }
+
+    public String getByID ( int idCategoria ) throws Exception {
+        String resposta = null;
+        boolean procurando = true;
+        short tam;
+        byte[] b;
+        byte lapide;
+        arquivo.seek(4);
+
+        while ( (arquivo.getFilePointer() < arquivo.length()) && (procurando) ) {
+            lapide = arquivo.readByte(); // Lê a lápide (indicador de remoção)
+            tam = arquivo.readShort(); // Lê o tamanho do registro
+
+            if (lapide != 0) { // Verifica se o registro é válido (não removido)
+
+                b = new byte[tam];
+                arquivo.read(b);
+                Categoria c = new Categoria();
+                c.fromByteArray(b);
+                if ( c.id == idCategoria ){
+                    resposta = new String (c.nome);
+                    procurando = false;
+                }
+            } else {
+                // Caso o registro tenha sido removido, pula para o próximo
+                arquivo.seek(arquivo.getFilePointer() + tam);
+            }
+        }
+        return resposta;
     }
 
     public void mostraCategorais() throws Exception {
@@ -163,6 +193,22 @@ public class ArquivoCategoria extends aed3.Arquivo<Categoria> {
             }
         }
 
+    }    
+
+    public String StringCategoria (int idCategoria) {
+        String resposta = new String();
+
+        if (idCategoria < 0) {
+            return null;
+        }
+    
+        try{
+            resposta = getByID(idCategoria);
+        }catch ( Exception e ){
+            return null;
+        }
+
+        return resposta;
     }
 
 }
