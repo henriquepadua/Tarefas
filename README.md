@@ -1,106 +1,176 @@
-Tarefas
-Este projeto é uma aplicação Java simples para gerenciar tarefas, permitindo ao usuário adicionar, remover, listar e salvar tarefas em um arquivo de texto. A aplicação utiliza uma estrutura básica de console para interação com o usuário e gravação em arquivos.
+Projeto de Gerenciamento de Tarefas
+Este projeto é um sistema de gerenciamento de tarefas que permite criar, atualizar, excluir e listar tarefas, categorias e rótulos. Ele utiliza estruturas de dados como Árvores B+ e Hash Extensível para gerenciar os dados de forma eficiente.
 
-Funcionalidades
-Adicionar Tarefa: Permite adicionar uma nova tarefa à lista de tarefas.
-Remover Tarefa: Remove uma tarefa existente com base no índice informado.
-Listar Tarefas: Exibe todas as tarefas armazenadas.
-Salvar Tarefas: Salva as tarefas em um arquivo de texto (tarefas.txt) para persistência de dados.
-Carregar Tarefas: Carrega as tarefas do arquivo tarefas.txt para a aplicação.
 Estrutura do Projeto
-O projeto possui uma classe principal chamada Arquivo.java, responsável pela leitura e gravação de tarefas em um arquivo de texto, além de interagir com o usuário através de um menu no console.
+aed3/
+    Arquivo.class
+    Arquivo.java
+    ArvoreBMais.class
+    ArvoreBMais.java
+    ArvoreBMais$Pagina.class
+    ElementoLista.class
+    ElementoLista.java
+    HashExtensivel.class
+    HashExtensivel.java
+    HashExtensivel$Cesto.class
+    HashExtensivel$Diretorio.class
+    ListaInvertida.class
+    ListaInvertida.java
+    ListaInvertida$Bloco.class
+    ParIDEndereco.class
+    ParIDEndereco.java
+    Registro.class
+    Registro.java
+    RegistroArvoreBMais.class
+Arquivos/
+    ArquivoCategoria.java
+    ArquivoRotulo.java
+    ArquivoTarefa.java
+Classes/
+compilar
+dados/
+IO.class
+IO.java
+Menus/
+    MenuRotulo.java
+Pares/
+    ParNomeIdRotulo.java
+    ParNomeIdTarefa.java
+Relacoes/
+    TarefaRotulo.java
+testes/
+    readme.txt
+///////////////////////////////////////////////////////////////////////////////////
 
-Classe Arquivo.java
-A classe Arquivo.java possui as seguintes funções principais:
+Funcionalidades:
 
-carregarTarefas: Carrega as tarefas de um arquivo de texto (tarefas.txt) e as armazena em uma lista.
-salvarTarefas: Salva a lista de tarefas no arquivo de texto (tarefas.txt).
-adicionarTarefa: Adiciona uma nova tarefa à lista de tarefas.
-removerTarefa: Remove uma tarefa existente da lista com base no índice informado.
-listarTarefas: Lista todas as tarefas atualmente armazenadas.
-Fluxo da Aplicação
-O usuário é apresentado com um menu simples que oferece opções para adicionar, remover, listar ou sair da aplicação.
-As tarefas são carregadas automaticamente do arquivo de texto assim que a aplicação inicia.
-Após as operações de adicionar ou remover, as tarefas são automaticamente salvas no arquivo para garantir persistência.
-Ao sair da aplicação, todas as tarefas atuais são salvas no arquivo tarefas.txt.
-Requisitos
-Java 8 ou superior para executar o código.
-Sistema de arquivos acessível para ler e gravar o arquivo tarefas.txt.
-Como Executar
-Clone este repositório:
+Tarefas:
+- Criar Tarefa: Cria uma nova tarefa e a armazena no sistema.
+- Atualizar Tarefa: Atualiza os dados de uma tarefa existente.
+- Excluir Tarefa: Exclui uma tarefa do sistema.
+- Listar Tarefas: Lista todas as tarefas armazenadas.
 
-bash
-Copiar código
-git clone https://github.com/henriquepadua/Tarefas.git
-Compile o projeto:
+Categorias:
+- Criar Categoria: Cria uma nova categoria e a armazena no sistema.
+- Atualizar Categoria: Atualiza os dados de uma categoria existente.
+- Excluir Categoria: Exclui uma categoria do sistema.
+- Listar Categorias: Lista todas as categorias armazenadas.
 
-bash
-Copiar código
-javac Arquivo.java
-Execute o projeto:
+Rótulos:
+- Criar Rótulo: Cria um novo rótulo e o armazena no sistema.
+- Atualizar Rótulo: Atualiza os dados de um rótulo existente.
+- Excluir Rótulo: Exclui um rótulo do sistema.
+- Listar Rótulos: Lista todos os rótulos armazenados.
 
-bash
-Copiar código
-java Arquivo
-Siga as instruções no terminal para adicionar, remover ou listar tarefas.
+///////////////////////////////////////////////////////////////////////
+Classes Principais
 
-Exemplo de Uso
-shell
-Copiar código
-Selecione uma opção:
-1. Adicionar tarefa
-2. Remover tarefa
-3. Listar tarefas
-4. Sair
-Adicionar Tarefa
-Selecione a opção 1 e insira a descrição da tarefa. A tarefa será adicionada à lista e salva no arquivo tarefas.txt.
+aed3.Arquivo
+- Classe genérica que gerencia operações de CRUD (Create, Read, Update, Delete) em arquivos.
 
-Remover Tarefa
-Selecione a opção 2, informe o índice da tarefa que deseja remover, e ela será excluída da lista e do arquivo.
+aed3.ArvoreBMais
+- Implementação de uma Árvore B+ para gerenciar índices de forma eficiente.
 
-Listar Tarefas
-Selecione a opção 3 para visualizar todas as tarefas armazenadas.
+aed3.HashExtensivel
+- Implementação de um Hash Extensível para gerenciar índices de forma eficiente.
 
-Estrutura do Arquivo tarefas.txt
-O arquivo tarefas.txt armazena cada tarefa em uma linha separada. A aplicação lê e grava este arquivo para manter a persistência das tarefas inseridas pelo usuário.
+Arquivos.ArquivoTarefa
+Gerencia operações de CRUD para tarefas.
 
-Contribuições
-Contribuições são bem-vindas! Se você encontrar algum bug ou quiser sugerir melhorias, sinta-se à vontade para abrir uma issue ou enviar um pull request.
+Arquivos.ArquivoCategoria
+- Gerencia operações de CRUD para categorias.
 
-Licença
-Este projeto está licenciado sob os termos da licença MIT. Consulte o arquivo LICENSE para mais informações.
+Arquivos.ArquivoRotulo
+- Gerencia operações de CRUD para rótulos.
 
-Esse README abrange as funcionalidades principais e a estrutura do projeto. Se houver mais funcionalidades ou detalhes no código, posso ajustar conforme necessário!
+  Pares.ParNomeIdRotulo
+- Classe que representa a relação entre o nome e o ID de um rótulo.
 
-//////////////////////////////////////////////////////////////////////////////////////////
+Relacoes.TarefaRotulo
+- Classe que representa a relação entre tarefas e rótulos.
+
+aed3.ParIDEndereco
+- Classe que representa a relação entre o ID e o endereço de um registro.
+
+IO
+- Classe principal que contém o menu de navegação do sistema.
+
+Requisitos:
+ - Java 8 ou superior
+
+Contribuição:
+- Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
+
+Licença:
+Este projeto está licenciado sob a MIT License.
+
+/////////////////////////////////////////////////////////////////////////
+
+Explicação das últimas classes criadas: 
+
+ArquivoRotulo:
+- Verificação de Tarefas Associadas: Antes de excluir um rótulo, o código verifica se existem tarefas associadas a ele. Se existirem, a exclusão é impedida e uma mensagem é exibida.
+- Exclusão do Rótulo: Se não houver tarefas associadas, o rótulo é excluído do sistema. O código também remove o rótulo da Árvore B+ e imprime mensagens de sucesso ou erro conforme o resultado da operação.
+
+Rotulo:
+- A classe Rotulo é uma representação de um rótulo no sistema de gerenciamento de tarefas. Ela contém atributos para armazenar o id e o nome do rótulo, e possui construtores para inicializar objetos Rotulo com diferentes conjuntos de dados. Além disso, ela implementa a interface Registro, o que implica que deve fornecer implementações para os métodos definidos nessa interface.
+
+MenuRotulo: 
+- A classe MenuRotulo gerencia o menu de operações relacionadas aos rótulos no sistema de gerenciamento de tarefas. Ela inicializa as instâncias necessárias para manipular rótulos, tarefas e categorias, e exibe um menu de opções para o usuário, permitindo a inclusão, alteração, exclusão e listagem de rótulos, entre outras operações.
+
+RotuloTarefa:
+A classe RotuloTarefa representa a relação entre rótulos e tarefas no sistema de gerenciamento de tarefas. Ela contém atributos para armazenar os identificadores de rótulo e tarefa, e possui construtores para inicializar objetos RotuloTarefa com diferentes conjuntos de dados. Além disso, a classe implementa a interface aed3.RegistroArvoreBMais<RotuloTarefa> para permitir o armazenamento em uma árvore B+ e a interface Comparable<RotuloTarefa> para permitir a comparação entre objetos. O método clone permite criar cópias dos objetos RotuloTarefa.
+
+Funções da Lista Invertida na Classe: 
+
+ArquivoTarefa
+A classe ArquivoTarefa utiliza uma lista invertida para gerenciar a indexação e busca de tarefas com base em termos específicos. Aqui está um resumo das funções relacionadas à lista invertida:
+
+gerarLista() : 
+- Descrição: Carrega uma lista de stop-words a partir de um arquivo de texto.
+- Uso: As stop-words são palavras comuns que são removidas durante a indexação para melhorar a relevância das buscas.
+
+removerStopWords(String[] nomeTarefa):
+- Descrição: Remove as stop-words de um array de palavras.
+- Uso: Utilizado para limpar os nomes das tarefas antes de indexá-los na lista invertida.
+
+calcularFrequencia(String[] words, String word): 
+- Descrição: Calcula a frequência de uma palavra em um array de palavras.
+- Uso: Utilizado para determinar a relevância de uma palavra em uma tarefa.
+
+adicionarLista():
+- Descrição: Adiciona todas as tarefas à lista invertida.
+- Uso: Utilizado para indexar todas as tarefas existentes no sistema.
+
+adicionarLista(Tarefa tarefa, int idTarefa): 
+- Descrição: Adiciona uma tarefa específica à lista invertida.
+- Uso: Utilizado para indexar uma nova tarefa ou atualizar a indexação de uma tarefa existente.
+
+idSomados(ArrayList<ElementoLista> arrayList):
+- Descrição: Soma as frequências de termos para cada ID de tarefa.
+- Uso: Utilizado para combinar os resultados de múltiplos termos de busca.
+
+imprimirLista(ArrayList<ElementoLista> arrayList):
+- Descrição: Imprime a lista de tarefas resultante de uma busca.
+- Uso: Utilizado para exibir os resultados de uma busca ao usuário.
+
+pesquisaPorTermo(String chave):
+- Descrição: Realiza uma busca por um termo específico na lista invertida.
+- Uso: Utilizado para encontrar tarefas que correspondem a um termo de busca fornecido pelo usuário.
+
+
+Resumo:
+- As funções relacionadas à lista invertida na classe ArquivoTarefa são responsáveis por carregar stop-words, remover stop-words de termos de busca, calcular a frequência de termos, adicionar tarefas à lista invertida, somar frequências de termos por ID de tarefa, imprimir resultados de busca e realizar buscas por termos específicos.
+
+-  Essas funções permitem uma indexação eficiente e uma busca rápida e relevante de tarefas no sistema.
+
+/////////////////////////////////////////////////////////////////////////
 Perguntas e respostas:
 
-01 - O CRUD (com índice direto) de categorias foi implementado?
-	SIM
-
-02 - Há um índice indireto de nomes para as categorias?
-	NÃO
-
-03 - O atributo de ID de categoria, como chave estrangeira, foi criado na classe Tarefa?
-	SIM
-
-04 - Há uma árvore B+ que registre o relacionamento 1:N entre tarefas e categorias?
-	SIM
-
-05 - É possível listar as tarefas de uma categoria?
-	SIM
-
-06 - A remoção de categorias checa se há alguma tarefa vinculada a ela?
-	SIM
-
-07 - A inclusão da categoria em uma tarefa se limita às categorias existentes?
-	NÃO
-
-08 - O trabalho está funcionando corretamente?
-	SIM
-
-09 - O trabalho está completo?
-	NÃO
-
-10 - O trabalho é original e não a cópia de um trabalho de outro grupo?
-	SIM
+01) O índice invertido com os termos das tarefas foi criado usando a classe ListaInvertida? SIM
+02) O CRUD de rótulos foi implementado? SIM
+03) No arquivo de tarefas, os rótulos são incluídos, alterados e excluídos em uma árvore B+?  SIM
+04) É possível buscar tarefas por palavras usando o índice invertido? SIM
+05) É possível buscar tarefas por rótulos usando uma árvore B+? SIM
+06) O trabalho está completo? SIM
+07) O trabalho é original e não a cópia de um trabalho de um colega? SIM
