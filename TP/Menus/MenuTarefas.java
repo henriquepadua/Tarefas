@@ -1,9 +1,11 @@
 package Menus;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
-
+import java.io.*;
 import Arquivos.ArquivoCategoria;
 import Arquivos.ArquivoRotulo;
 import Arquivos.ArquivoTarefa;
@@ -34,6 +36,8 @@ public class MenuTarefas {
             System.out.println("3 - Excluir");
             System.out.println("4 - Buscar");
             System.out.println("5 - Mostrar/Pesquisar");
+            System.out.println("6 - Comprimir Arquivos");
+            System.out.println("7 - Descomprimir Arquivos");
             System.out.println("0 - Voltar");
 
             System.out.print("Opção: ");
@@ -59,6 +63,12 @@ public class MenuTarefas {
                 case 5:
                     (new MenuPesquisaTarefas()).menu(arquivoTarefa, arquivoRotulo, arquivoCategoria);
                     break;
+                case 6:
+                    comprimirTarefas();
+                    break;
+                case 7:
+                    descomprimirTarefas();
+                    break;
                 case 0:
                     break;
                 default:
@@ -75,7 +85,7 @@ public class MenuTarefas {
         String status;
         String prioridade;
         int idCategoria;
-        ArrayList<Integer> idRotulo = new ArrayList<Integer>(0);
+        ArrayList<Integer> idRotulo = new ArrayList<>(0);
 
         boolean dadosCompletos = false;
 
@@ -85,27 +95,27 @@ public class MenuTarefas {
             nome = console.nextLine();
 
             String entrada;
-            do{
+            do {
                 System.out.print("\rData de Criação (dd/MM/yyyy): ");
                 entrada = console.nextLine();
-                try{
+                try {
                     dataCriacao = LocalDate.parse(entrada, formatter);
-                }catch ( Exception e){
+                } catch (Exception e) {
                     System.err.print("\rERRO NO FORMATO DA DATA!!!: ");
                     dataCriacao = null;
                 }
-            }while(dataCriacao == null);
+            } while (dataCriacao == null);
 
-            do{
-                System.out.print("\rData de Conclusão (dd/MM/yyyy) ");
+            do {
+                System.out.print("\rData de Conclusão (dd/MM/yyyy): ");
                 entrada = console.nextLine();
-                try{
+                try {
                     dataConclusao = LocalDate.parse(entrada, formatter);
-                }catch ( Exception e){
+                } catch (Exception e) {
                     System.err.print("\rERRO NO FORMATO DA DATA!!! ");
                     dataConclusao = null;
                 }
-            }while(dataConclusao == null);
+            } while (dataConclusao == null);
 
             System.out.print("\rStatus (pendente, concluído...): ");
             status = console.nextLine();
@@ -127,17 +137,17 @@ public class MenuTarefas {
         System.out.println();
         idCategoria = arquivoCategoria.mostraCategorias2();
         int idLido;
-        do{
-            System.out.println("Selecione um novo rotulo ou insira algo invalido para parar:");
+        do {
+            System.out.println("Selecione um novo rótulo ou insira algo inválido para parar:");
             idLido = arquivoRotulo.selecionaRotulos();
-            if (idLido != -1 ) idRotulo.add(idLido);
-        }while(idLido != -1);
+            if (idLido != -1)
+                idRotulo.add(idLido);
+        } while (idLido != -1);
 
         System.out.println("Confirma a inclusão da tarefa? (S/N) ");
         char resp = console.nextLine().charAt(0);
         if (resp == 'S' || resp == 's') {
             try {
-
                 Tarefa t = new Tarefa(nome, dataCriacao, dataConclusao, status, prioridade, idCategoria, idRotulo);
                 arquivoTarefa.create(t);
                 System.out.println("Tarefa criada com sucesso.");
@@ -147,4 +157,178 @@ public class MenuTarefas {
         }
     }
 
+    public void comprimirTarefas() {
+        try {
+            System.out.println("Digite os caminhos dos arquivos a serem comprimidos, separados por vírgulas:");
+            String entrada = console.nextLine();
+            List<String> arquivos = List.of(entrada.split(","));
+
+            ArquivoTarefa.compactarArquivos(arquivos);
+        } catch (IOException e) {
+            System.err.println("Erro ao comprimir os arquivos: " + e.getMessage());
+        }
+    }
+
+    public void descomprimirTarefas() {
+        try {
+            System.out.println("Digite o caminho do arquivo de backup a ser descomprimido:");
+            String caminhoBackup = console.nextLine();
+
+            ArquivoTarefa.descompactarArquivos(caminhoBackup);
+        } catch (IOException e) {
+            System.err.println("Erro ao descomprimir o arquivo: " + e.getMessage());
+        }
+    }
 }
+
+
+// package Menus;
+// import java.time.LocalDate;
+// import java.time.format.DateTimeFormatter;
+// import java.util.ArrayList;
+// import java.util.Scanner;
+
+// import Arquivos.ArquivoCategoria;
+// import Arquivos.ArquivoRotulo;
+// import Arquivos.ArquivoTarefa;
+// import Classes.Tarefa;
+
+// public class MenuTarefas {
+
+//     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//     ArquivoTarefa arquivoTarefa;
+//     private static Scanner console = new Scanner(System.in);
+//     ArquivoCategoria arquivoCategoria = new ArquivoCategoria("categorias.db", 5);
+//     ArquivoRotulo arquivoRotulo = new ArquivoRotulo("rotulos.db", 5);
+
+//     public MenuTarefas() throws Exception {
+//         arquivoTarefa = new ArquivoTarefa("Tarefas.db", 5);
+//     }
+
+//     public void menu() throws Exception {
+
+//         int opcao;
+//         do {
+
+//             System.out.println("AEDsIII");
+//             System.out.println("-------");
+//             System.out.println("\n> Início > Tarefas");
+//             System.out.println("1 - Incluir");
+//             System.out.println("2 - Alterar");
+//             System.out.println("3 - Excluir");
+//             System.out.println("4 - Buscar");
+//             System.out.println("5 - Mostrar/Pesquisar");
+//             System.out.println("0 - Voltar");
+
+//             System.out.print("Opção: ");
+//             try {
+//                 opcao = Integer.valueOf(console.nextLine());
+//             } catch (NumberFormatException e) {
+//                 opcao = -1;
+//             }
+
+//             switch (opcao) {
+//                 case 1:
+//                     incluirTarefa();
+//                     break;
+//                 case 2:
+//                     arquivoTarefa.update();
+//                     break;
+//                 case 3:
+//                     arquivoTarefa.delete();
+//                     break;
+//                 case 4:
+//                     arquivoTarefa.buscarTarefas();
+//                     break;
+//                 case 5:
+//                     (new MenuPesquisaTarefas()).menu(arquivoTarefa, arquivoRotulo, arquivoCategoria);
+//                     break;
+//                 case 0:
+//                     break;
+//                 default:
+//                     System.out.println("Opção inválida!");
+//                     break;
+//             }
+//         } while (opcao != 0);
+//     }
+
+//     public void incluirTarefa() throws Exception {
+//         String nome;
+//         LocalDate dataCriacao;
+//         LocalDate dataConclusao;
+//         String status;
+//         String prioridade;
+//         int idCategoria;
+//         ArrayList<Integer> idRotulo = new ArrayList<Integer>(0);
+
+//         boolean dadosCompletos = false;
+
+//         System.out.println("\nInclusão de tarefa");
+//         do {
+//             System.out.print("\nNome da tarefa (min. de 5 letras): ");
+//             nome = console.nextLine();
+
+//             String entrada;
+//             do{
+//                 System.out.print("\rData de Criação (dd/MM/yyyy): ");
+//                 entrada = console.nextLine();
+//                 try{
+//                     dataCriacao = LocalDate.parse(entrada, formatter);
+//                 }catch ( Exception e){
+//                     System.err.print("\rERRO NO FORMATO DA DATA!!!: ");
+//                     dataCriacao = null;
+//                 }
+//             }while(dataCriacao == null);
+
+//             do{
+//                 System.out.print("\rData de Conclusão (dd/MM/yyyy) ");
+//                 entrada = console.nextLine();
+//                 try{
+//                     dataConclusao = LocalDate.parse(entrada, formatter);
+//                 }catch ( Exception e){
+//                     System.err.print("\rERRO NO FORMATO DA DATA!!! ");
+//                     dataConclusao = null;
+//                 }
+//             }while(dataConclusao == null);
+
+//             System.out.print("\rStatus (pendente, concluído...): ");
+//             status = console.nextLine();
+
+//             System.out.print("\rPrioridade (alta, baixa...): ");
+//             prioridade = console.nextLine();
+
+//             if (nome.length() >= 5 || nome.length() == 0)
+//                 dadosCompletos = true;
+//             else
+//                 System.err.println("O nome da tarefa deve ter no mínimo 5 caracteres.");
+//         } while (!dadosCompletos);
+
+//         if (nome.length() == 0)
+//             return;
+
+//         System.out.println();
+//         System.out.println("Por favor, selecione a categoria da tarefa: ");
+//         System.out.println();
+//         idCategoria = arquivoCategoria.mostraCategorias2();
+//         int idLido;
+//         do{
+//             System.out.println("Selecione um novo rotulo ou insira algo invalido para parar:");
+//             idLido = arquivoRotulo.selecionaRotulos();
+//             if (idLido != -1 ) idRotulo.add(idLido);
+//         }while(idLido != -1);
+
+//         System.out.println("Confirma a inclusão da tarefa? (S/N) ");
+//         char resp = console.nextLine().charAt(0);
+//         if (resp == 'S' || resp == 's') {
+//             try {
+
+//                 Tarefa t = new Tarefa(nome, dataCriacao, dataConclusao, status, prioridade, idCategoria, idRotulo);
+//                 arquivoTarefa.create(t);
+//                 System.out.println("Tarefa criada com sucesso.");
+//             } catch (Exception e) {
+//                 System.out.println("Erro do sistema. Não foi possível criar a Tarefa!");
+//             }
+//         }
+//     }
+
+// }

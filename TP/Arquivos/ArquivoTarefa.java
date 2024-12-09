@@ -2,9 +2,11 @@ package Arquivos;
 
 import aed3.*;
 
-import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,19 +14,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
-
+import java.util.List;
 import Classes.Tarefa;
 import Pares.ParNomeIdTarefa;
 import Relacoes.CategoriaTarefa;
 import Relacoes.RotuloTarefa;
 import Relacoes.TarefaRotulo;
+import java.io.*;
+import java.util.*;
+import Classes.lzw;
 
 public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
-
     /*
      * ATRIBUTOS
      */
-
+    private static final String BACKUP_FOLDER = "backups";
     int quantidadeTarefas = 0;
     ArvoreBMais<ParNomeIdTarefa> arvoreBMais;
     Arquivo<Tarefa> arqTarefas;
@@ -38,11 +42,100 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
     ArrayList<String> stopWords = new ArrayList<String>();
     ListaInvertida listaInvertida;
 
+    public static void compactarArquivos(List<String> arquivos) throws IOException {
+        // Criar pasta de backup, se não existir
+        Files.createDirectories(Paths.get(BACKUP_FOLDER));
+
+        // Gerar nome para o backup
+        String backupFileName = BACKUP_FOLDER + "/backup_"
+                + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".lzw";
+        try (DataOutputStream out = new DataOutputStream(new FileOutputStream(backupFileName))) {
+            for (String caminho : arquivos) {
+                File arquivo = new File(caminho);
+
+                if (!arquivo.exists()) {
+                    System.err.println("Arquivo não encontrado: " + caminho);
+                    continue;
+                }
+
+                // Ler conteúdo do arquivo como vetor de bytes
+                byte[] data = Files.readAllBytes(arquivo.toPath());
+
+                // Compactar os dados usando LZW
+                List<Integer> compressed = lzw.compress(data);
+
+                // Escrever informações no backup
+                out.writeUTF(arquivo.getName()); // Nome do arquivo
+                out.writeInt(compressed.size()); //tamanho do arquivo compactado
+                for (int code : compressed) {
+                    out.writeInt(code); // Grava os códigos inteiros no arquivo
+                }
+
+                // Chamar o método medirCompressao
+                medirCompressao(caminho, backupFileName);// Chamar o método medirCompressao
+                // for (int code : compressed) {
+                //     out.writeShort(code); // Vetor compactado (12 bits)
+                // }
+            }
+        }
+        System.out.println("Backup criado: " + backupFileName);
+    }
+
+    public static void medirCompressao(String arquivoOriginal, String arquivoCompactado) {
+        File original = new File(arquivoOriginal);
+        File compactado = new File(arquivoCompactado);
+
+        long tamanhoOriginal = original.length();
+        long tamanhoCompactado = compactado.length();
+
+        System.out.println("Tamanho original: " + tamanhoOriginal + " bytes");
+        System.out.println("Tamanho compactado: " + tamanhoCompactado + " bytes");
+
+        if (tamanhoCompactado >= tamanhoOriginal) {
+            System.out.println("O arquivo compactado é maior ou igual ao original!");
+        } else {
+            System.out.printf("Taxa de compressão: %.2f%%\n",
+                    (1.0 - (double) tamanhoCompactado / tamanhoOriginal) * 100);
+        }
+    }
+
+    public static void descompactarArquivos(String arquivoBackup) throws IOException {
+        File backupFile = new File(arquivoBackup);
+
+        if (!backupFile.exists()) {
+            System.err.println("Arquivo de backup não encontrado: " + arquivoBackup);
+            return;
+        }
+
+        try (DataInputStream in = new DataInputStream(new FileInputStream(backupFile))) {
+            while (in.available() > 0) {
+                String fileName = in.readUTF();
+                int compressedSize = in.readInt();
+                List<Integer> compressed = new ArrayList<>();
+
+                for (int i = 0; i < compressedSize; i++) {
+                    compressed.add((int) in.readShort());
+                }
+
+                // Descompactar os dados
+                byte[] decompressed = lzw.decompress(compressed);
+
+                // Salvar o conteúdo descompactado
+                try (FileOutputStream fos = new FileOutputStream(fileName)) {
+                    fos.write(decompressed);
+                }
+
+                System.out.println("Arquivo descompactado: " + fileName);
+            }
+        }
+    }
+
     /*
      * FUNCOES
      */
-
-    /** Construtor padrao */
+    /**
+     * Construtor padrao
+     */
     public ArquivoTarefa(String nomeArquivo, int ordemArvore) throws Exception {
         // super pra construtor padrao da classe pai
         super(nomeArquivo, Tarefa.class.getConstructor());
@@ -69,6 +162,7 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
         for (int i = 0; i < tarefa.idRotulo.size(); i++) {
             arvoreRT.create(new RotuloTarefa(tarefa.idRotulo.get(i), tarefa.getId()));
         }
+
         for (int i = 0; i < tarefa.idRotulo.size(); i++) {
             arvoreTR.create(new TarefaRotulo(tarefa.getId(), tarefa.idRotulo.get(i)));
         }
@@ -268,7 +362,7 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
             if (ict != null) {
                 for (CategoriaTarefa categoriaTarefa : ict) {
                     Tarefa tarefa = arqTarefas.read(categoriaTarefa.idTarefa); // Lendo a tarefa a partir do ID da
-                                                                               // categoria
+                    // categoria
 
                     if (tarefa != null && tarefa.nome.equals(entrada)) {
                         System.out.println("Entre com o novo nome da tarefa: ");
@@ -288,8 +382,9 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
                         do {
                             System.out.println("Entre com um novo rotulo ou insira algo invalido para parar:");
                             idLido = arquivoRotulo.selecionaRotulos();
-                            if (idLido != -1)
+                            if (idLido != -1) {
                                 tarefa.idRotulo.add(idLido);
+                            }
                         } while (idLido != -1);
 
                         Tarefa testeTarefa = new Tarefa(tarefa.getId(), nome, dataCriacao, dataConclusao, status,
@@ -339,10 +434,12 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
         return n;
     }
 
-    /** Carregar arquivo de stop-words */
+    /**
+     * Carregar arquivo de stop-words
+     */
     public void gerarLista() throws Exception {
         // abrir
-        RandomAccessFile raf = new RandomAccessFile(".\\dados\\stopWords.txt", "r");
+        RandomAccessFile raf = new RandomAccessFile("dados/stopWords.txt", "r");
 
         // ler
         raf.seek(0);
@@ -468,10 +565,18 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
         int numeroEntidades = listaInvertida.numeroEntidades();
         ArrayList<ElementoLista> arrayList = new ArrayList<>();
 
+        if (numeroEntidades == 0) {
+            System.err.println("Nenhuma entidade encontrada na lista invertida.");
+        }
+
         for (int i = 0; i < vet.length; i++) {
             ElementoLista[] teste = listaInvertida.read(vet[i]);
 
-            tf = numeroEntidades / teste.length;
+            if (teste.length == 0) {
+                continue;
+            }
+
+            tf = (float) numeroEntidades / teste.length;
 
             for (int j = 0; j < teste.length; j++) {
                 teste[j].frequencia = teste[j].frequencia * tf;
