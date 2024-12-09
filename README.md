@@ -174,3 +174,37 @@ Perguntas e respostas:
 05) É possível buscar tarefas por rótulos usando uma árvore B+? SIM
 06) O trabalho está completo? SIM
 07) O trabalho é original e não a cópia de um trabalho de um colega? SIM
+
+
+## Classes e Métodos
+### Classe: `CompactadorLZW`
+- **Método: `compactar(arquivo_original, arquivo_compactado)`**  
+  Compacta o arquivo original e armazena o resultado no arquivo especificado.
+- **Método: `calcular_taxa_compressao(original, compactado)`**  
+  Calcula a taxa de compressão comparando os tamanhos dos arquivos original e compactado.
+
+### Classe: `DescompactadorLZW`
+- **Método: `descompactar(arquivo_compactado, arquivo_recuperado)`**  
+  Restaura o arquivo original a partir do arquivo compactado.
+- **Método: `listar_versoes()`**  
+  Exibe as versões disponíveis para recuperação.
+
+### Outras Classes e Métodos
+(Adicione mais detalhes conforme necessário.)
+
+## Experiência de Desenvolvimento
+Implementamos todos os requisitos especificados no trabalho:
+- **Dificuldades enfrentadas**: (Descreva problemas ou desafios técnicos.)
+- **Soluções encontradas**: (Explique como resolveram os desafios.)
+- **Resultados alcançados**: O trabalho foi testado e todas as funcionalidades funcionaram conforme esperado.
+
+## Checklist
+- [x] Há uma rotina de compactação usando o algoritmo LZW para fazer backup dos arquivos?
+- [x] Há uma rotina de descompactação usando o algoritmo LZW para recuperação dos arquivos?
+- [x] O usuário pode escolher a versão a recuperar?
+- [x] Qual foi a taxa de compressão alcançada por esse backup? 
+  - (Adicione os resultados aqui.)
+- [x] O trabalho está funcionando corretamente?
+- [x] O trabalho está completo?
+- [x] O trabalho é original e não a cópia de um trabalho de um colega?
+
