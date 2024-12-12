@@ -3,6 +3,7 @@ package Arquivos;
 import aed3.*;
 
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.time.LocalDate;
@@ -28,7 +29,6 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
     /*
      * ATRIBUTOS
      */
-    private static final String BACKUP_FOLDER = "backups";
     int quantidadeTarefas = 0;
     ArvoreBMais<ParNomeIdTarefa> arvoreBMais;
     Arquivo<Tarefa> arqTarefas;
@@ -41,94 +41,6 @@ public class ArquivoTarefa extends aed3.Arquivo<Tarefa> {
     ArquivoRotulo arquivoRotulo = new ArquivoRotulo("rotulos.db", 5);
     ArrayList<String> stopWords = new ArrayList<String>();
     ListaInvertida listaInvertida;
-
-    public static void compactarArquivos(List<String> arquivos) throws IOException {
-        // Criar pasta de backup, se não existir
-        Files.createDirectories(Paths.get(BACKUP_FOLDER));
-
-        // Gerar nome para o backup
-        String backupFileName = BACKUP_FOLDER + "/backup_"
-                + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".lzw";
-        try (DataOutputStream out = new DataOutputStream(new FileOutputStream(backupFileName))) {
-            for (String caminho : arquivos) {
-                File arquivo = new File(caminho);
-
-                if (!arquivo.exists()) {
-                    System.err.println("Arquivo não encontrado: " + caminho);
-                    continue;
-                }
-
-                // Ler conteúdo do arquivo como vetor de bytes
-                byte[] data = Files.readAllBytes(arquivo.toPath());
-
-                // Compactar os dados usando LZW
-                List<Integer> compressed = lzw.compress(data);
-
-                // Escrever informações no backup
-                out.writeUTF(arquivo.getName()); // Nome do arquivo
-                out.writeInt(compressed.size()); //tamanho do arquivo compactado
-                for (int code : compressed) {
-                    out.writeInt(code); // Grava os códigos inteiros no arquivo
-                }
-
-                // Chamar o método medirCompressao
-                medirCompressao(caminho, backupFileName);// Chamar o método medirCompressao
-                // for (int code : compressed) {
-                //     out.writeShort(code); // Vetor compactado (12 bits)
-                // }
-            }
-        }
-        System.out.println("Backup criado: " + backupFileName);
-    }
-
-    public static void medirCompressao(String arquivoOriginal, String arquivoCompactado) {
-        File original = new File(arquivoOriginal);
-        File compactado = new File(arquivoCompactado);
-
-        long tamanhoOriginal = original.length();
-        long tamanhoCompactado = compactado.length();
-
-        System.out.println("Tamanho original: " + tamanhoOriginal + " bytes");
-        System.out.println("Tamanho compactado: " + tamanhoCompactado + " bytes");
-
-        if (tamanhoCompactado >= tamanhoOriginal) {
-            System.out.println("O arquivo compactado é maior ou igual ao original!");
-        } else {
-            System.out.printf("Taxa de compressão: %.2f%%\n",
-                    (1.0 - (double) tamanhoCompactado / tamanhoOriginal) * 100);
-        }
-    }
-
-    public static void descompactarArquivos(String arquivoBackup) throws IOException {
-        File backupFile = new File(arquivoBackup);
-
-        if (!backupFile.exists()) {
-            System.err.println("Arquivo de backup não encontrado: " + arquivoBackup);
-            return;
-        }
-
-        try (DataInputStream in = new DataInputStream(new FileInputStream(backupFile))) {
-            while (in.available() > 0) {
-                String fileName = in.readUTF();
-                int compressedSize = in.readInt();
-                List<Integer> compressed = new ArrayList<>();
-
-                for (int i = 0; i < compressedSize; i++) {
-                    compressed.add((int) in.readShort());
-                }
-
-                // Descompactar os dados
-                byte[] decompressed = lzw.decompress(compressed);
-
-                // Salvar o conteúdo descompactado
-                try (FileOutputStream fos = new FileOutputStream(fileName)) {
-                    fos.write(decompressed);
-                }
-
-                System.out.println("Arquivo descompactado: " + fileName);
-            }
-        }
-    }
 
     /*
      * FUNCOES

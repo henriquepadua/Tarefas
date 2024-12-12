@@ -1,69 +1,79 @@
 package Classes;
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import aed3.Registro;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class lzw {
-    // Compressão usando LZW
-    public static List<Integer> compress(byte[] data) {
-        Map<String, Integer> dictionary = new HashMap<>();
-        for (int i = 0; i < 256; i++) {
-            dictionary.put("" + (char) i, i);
-        }
-        int dictSize = 256;
+    public lzw(){}
 
-        String current = "";
-        List<Integer> compressed = new ArrayList<>();
+    public String lzw_compress(String input){
+        HashMap<String,Integer> dictionary = new LinkedHashMap<>();
+        String[] data = (input + "").split("");
+        String out = "";
+        ArrayList<String> temp_out = new ArrayList<>();
+        String currentChar;
+        String phrase = data[0];
+        int code = 256;
+        for(int i=1; i<data.length;i++){
+            currentChar = data[i];
+            if(dictionary.get(phrase+currentChar) != null){
+                phrase += currentChar;
+            }
+            else{
+                if(phrase.length() > 1){
+                    temp_out.add(Character.toString((char)dictionary.get(phrase).intValue()));
+                }
+                else{
+                    temp_out.add(Character.toString((char)Character.codePointAt(phrase,0)));
+                }
 
-        for (byte b : data) {
-            char ch = (char) (b & 0xFF);
-            String next = current + ch;
-
-            if (dictionary.containsKey(next)) {
-                current = next;
-            } else {
-                compressed.add(dictionary.get(current));
-                dictionary.put(next, dictSize++);
-                current = "" + ch;
+                dictionary.put(phrase+currentChar,code);
+                code++;
+                phrase = currentChar;
             }
         }
 
-        if (!current.isEmpty()) {
-            compressed.add(dictionary.get(current));
+        if(phrase.length() > 1){
+            temp_out.add(Character.toString((char)dictionary.get(phrase).intValue()));
         }
-        return compressed;
+        else{
+            temp_out.add(Character.toString((char)Character.codePointAt(phrase,0)));
+        }
+
+        for(String outchar:temp_out){
+            out+=outchar;
+        }
+        return out;
     }
 
-    // Descompressão usando LZW
-    public static byte[] decompress(List<Integer> compressed) {
-        Map<Integer, String> dictionary = new HashMap<>();
-        for (int i = 0; i < 256; i++) {
-            dictionary.put(i, "" + (char) i);
-        }
-        int dictSize = 256;
-
-        String current = dictionary.get(compressed.remove(0));
-        StringBuilder result = new StringBuilder(current);
-
-        for (int code : compressed) {
-            String entry;
-            if (dictionary.containsKey(code)) {
-                entry = dictionary.get(code);
-            } else if (code == dictSize) {
-                entry = current + current.charAt(0);
-            } else {
-                throw new IllegalArgumentException("Código inválido na descompressão!");
+    public String lzw_extract(String input){
+        HashMap<Integer,String> dictionary = new LinkedHashMap<>();
+        String[] data = (input + "").split("");
+        String currentChar = data[0];
+        String oldPhrase = currentChar;
+        String out = currentChar;
+        int code = 256;
+        String phrase="";
+        for(int i=1;i<data.length;i++){
+            int currCode = Character.codePointAt(data[i],0);
+            if(currCode < 256){
+                phrase = data[i];
             }
-
-            result.append(entry);
-            dictionary.put(dictSize++, current + entry.charAt(0));
-            current = entry;
+            else{
+                if(dictionary.get(currCode) != null){
+                    phrase = dictionary.get(currCode);
+                }
+                else{
+                    phrase = oldPhrase + currentChar;
+                }
+            }
+            out+=phrase;
+            currentChar = phrase.substring(0,1);
+            dictionary.put(code,oldPhrase+currentChar);
+            code++;
+            oldPhrase = phrase;
         }
-
-        return result.toString().getBytes();
+        return out;
     }
 }

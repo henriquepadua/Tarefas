@@ -36,8 +36,6 @@ public class MenuTarefas {
             System.out.println("3 - Excluir");
             System.out.println("4 - Buscar");
             System.out.println("5 - Mostrar/Pesquisar");
-            System.out.println("6 - Comprimir Arquivos");
-            System.out.println("7 - Descomprimir Arquivos");
             System.out.println("0 - Voltar");
 
             System.out.print("Opção: ");
@@ -62,12 +60,6 @@ public class MenuTarefas {
                     break;
                 case 5:
                     (new MenuPesquisaTarefas()).menu(arquivoTarefa, arquivoRotulo, arquivoCategoria);
-                    break;
-                case 6:
-                    comprimirTarefas();
-                    break;
-                case 7:
-                    descomprimirTarefas();
                     break;
                 case 0:
                     break;
@@ -154,29 +146,6 @@ public class MenuTarefas {
             } catch (Exception e) {
                 System.out.println("Erro do sistema. Não foi possível criar a Tarefa!");
             }
-        }
-    }
-
-    public void comprimirTarefas() {
-        try {
-            System.out.println("Digite os caminhos dos arquivos a serem comprimidos, separados por vírgulas:");
-            String entrada = console.nextLine();
-            List<String> arquivos = List.of(entrada.split(","));
-
-            ArquivoTarefa.compactarArquivos(arquivos);
-        } catch (IOException e) {
-            System.err.println("Erro ao comprimir os arquivos: " + e.getMessage());
-        }
-    }
-
-    public void descomprimirTarefas() {
-        try {
-            System.out.println("Digite o caminho do arquivo de backup a ser descomprimido:");
-            String caminhoBackup = console.nextLine();
-
-            ArquivoTarefa.descompactarArquivos(caminhoBackup);
-        } catch (IOException e) {
-            System.err.println("Erro ao descomprimir o arquivo: " + e.getMessage());
         }
     }
 }
